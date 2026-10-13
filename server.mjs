@@ -31,7 +31,7 @@ export async function createApp({db,production=false,origin}={}){
   const user=await current(req);let data={};
   if(['POST','PATCH','DELETE'].includes(method)){
    if(!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw new Failure(415,'Use JSON for this request.');
-   const expected=origin||process.env.APP_ORIGIN||`http://${req.headers.host}`;
+   const expected=origin||process.env.APP_ORIGIN||process.env.RENDER_EXTERNAL_URL||`http://${req.headers.host}`;
    if(req.headers.origin!==expected)throw new Failure(403,'Request origin not allowed.');
    if(user&&req.headers['x-csrf-token']!==user.csrf)throw new Failure(403,'Session verification failed. Refresh and try again.');
    data=await body(req);

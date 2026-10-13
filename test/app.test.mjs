@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {database} from '../db.mjs';import {createApp} from '../server.mjs';
 test('Authentication, ownership, CSRF, booking constraints and clinic roles',async()=>{
- const db=await database(),{server}=await createApp({db});await new Promise(r=>server.listen(0,'127.0.0.1',r));const root='http://127.0.0.1:'+server.address().port;
+ const db=await database({url:process.env.PAWCARE_TEST_DATABASE_URL}),{server}=await createApp({db});await new Promise(r=>server.listen(0,'127.0.0.1',r));const root='http://127.0.0.1:'+server.address().port;
  async function request(path,{method='GET',data,client,origin=root,csrf=true}={}){const res=await fetch(root+path,{method,headers:{'Content-Type':'application/json',Origin:origin,...(client?{Cookie:client.cookie,...(csrf?{'X-CSRF-Token':client.csrf}:{})}:{})},...(data?{body:JSON.stringify(data)}:{})});return {status:res.status,body:await res.json(),cookie:res.headers.get('set-cookie')};}
  async function register(email){const r=await request('/api/register',{method:'POST',data:{email,name:'Test Owner',password:'secure-passphrase-123'}});assert.equal(r.status,201);return {cookie:r.cookie.split(';')[0],csrf:r.body.csrf,id:r.body.user.id};}
  try{
