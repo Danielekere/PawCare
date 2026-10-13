@@ -6,4 +6,10 @@ The suite verifies health, registration, password hashing, wrong-password reject
 
 Frontend JavaScript syntax check passed using `node --check public/app.js`.
 
-Not yet performed: browser interaction tests, screen-reader checks, mobile visual checks, real Neon/PostgreSQL integration tests, concurrent request tests against PostgreSQL, Render deployment checks, backup restore verification, load tests and independent penetration testing. Local SQLite behavior is not proof that every PostgreSQL path works.
+## Hosted verification — 13 October 2026
+
+Render build on Node 24.21.0 passed both the SQLite suite and the same suite against live Neon PostgreSQL using an isolated temporary schema. The temporary schema was removed after testing. The tests used an explicit local origin; test-schema setup used Neon's direct endpoint because its transaction pooler rejects search_path startup options. The production application uses the pooled URL provided by the operator.
+
+Render reported the deployment live. HTTPS `/health` returned `{"status":"ok"}`. Browser checks verified that login and signup render labelled fields, the public veterinarian list loads all three sample records from Neon, and searching for Tunde returns only that veterinarian.
+
+Not yet performed: authenticated browser journeys with a real owner or clinic account, screen-reader audits, mobile device testing, concurrent load tests, backup restore verification and independent penetration testing. Automated PostgreSQL tests verify server workflows, not every browser interaction.
